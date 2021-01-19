@@ -36,6 +36,9 @@
     <ClInclude Include="Headers\stb_image.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Fog.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\Textures\container2.png">
@@ -92,6 +95,7 @@
     <None Include="Shaders\object.vs" />
     <None Include="Shaders\texture.fs" />
     <None Include="Shaders\texture.vs" />
+    <None Include="imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sources\load_image.cpp">

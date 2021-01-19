@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Headers\camera.h" />
+    <ClInclude Include="Headers\Fog.h" />
     <ClInclude Include="Headers\followcamera.h" />
     <ClInclude Include="Headers\light.h" />
     <ClInclude Include="Headers\logging.h" />
@@ -164,6 +165,7 @@
     <Image Include="Resources\Textures\skybox\top.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="imgui.ini" />
     <None Include="Shaders\cubemap.fs" />
     <None Include="Shaders\cubemap.vs" />
     <None Include="Shaders\gouraud.fs" />
