@@ -140,7 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Headers\camera.h" />
-    <ClInclude Include="Headers\Fog.h" />
+    <ClInclude Include="Headers\fog.h" />
     <ClInclude Include="Headers\followcamera.h" />
     <ClInclude Include="Headers\light.h" />
     <ClInclude Include="Headers\logging.h" />
@@ -149,6 +149,14 @@
     <ClInclude Include="Headers\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Resources\Textures\banana\banana-0.png" />
+    <Image Include="Resources\Textures\banana\banana-1.png" />
+    <Image Include="Resources\Textures\banana\banana-2.png" />
+    <Image Include="Resources\Textures\banana\banana-3.png" />
+    <Image Include="Resources\Textures\banana\banana-4.png" />
+    <Image Include="Resources\Textures\banana\banana-5.png" />
+    <Image Include="Resources\Textures\banana\banana-6.png" />
+    <Image Include="Resources\Textures\banana\banana-7.png" />
     <Image Include="Resources\Textures\container2.png" />
     <Image Include="Resources\Textures\container2_specular.png" />
     <Image Include="Resources\Textures\fish.png" />

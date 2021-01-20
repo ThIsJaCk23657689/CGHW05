@@ -36,7 +36,7 @@
     <ClInclude Include="Headers\stb_image.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Fog.h">
+    <ClInclude Include="Headers\fog.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
@@ -81,6 +81,30 @@
       <Filter>資源檔</Filter>
     </Image>
     <Image Include="Resources\Textures\skybox\right.jpg">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-0.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-1.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-2.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-3.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-4.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-5.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-6.png">
+      <Filter>資源檔</Filter>
+    </Image>
+    <Image Include="Resources\Textures\banana\banana-7.png">
       <Filter>資源檔</Filter>
     </Image>
   </ItemGroup>

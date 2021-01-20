@@ -57,6 +57,7 @@ void drawCube();
 void drawPlane(Shader shader, glm::vec3 position, float size_w, float size_h, int method);
 void drawFish(Shader shader, glm::vec3 position, float size);
 void drawGrass(Shader shader, glm::vec3 position, float size);
+void drawBanana(Shader shader, glm::vec3 position, float size);
 void drawBox(Shader shader);
 void drawROV(Shader shader);
 void drawCamera(Shader shader);
@@ -161,6 +162,7 @@ static bool useSpecularTexture = true;
 static bool useEmission = true;
 static bool useGamma = false;
 static float GammaValue = 1.0f / 2.2f;
+static bool skyboxColorManual = false;
 
 // Foggy Setting
 Fog fog(glm::vec4(0.266f, 0.5f, 0.609f, 1.0f), true, global_near, global_far);
@@ -186,13 +188,15 @@ std::vector<float> viewVolumeVertices;
 std::vector<int> viewVolumeIndices;
 unsigned int viewVolumeVAO, viewVolumeVBO, viewVolumeEBO;
 
-static bool enableBillboard = false;
+static bool enableBillboard = true;
 
 // Texture parameter
+static int keyFrameRate = 12;
 unsigned int rovTexture, seaTexture, sandTexture, grassTexture, boxTexture, boxSpecularTexture, fishTexture, skyTexture;
+std::vector<unsigned int> bananaTexture;
 
-std::vector<glm::vec3> boxposition, plasticposition, grassposition, fishposition;
-std::vector<float> grassSize, fishSize;
+std::vector<glm::vec3> boxposition, plasticposition, grassposition, fishposition, bananaposition;
+std::vector<float> grassSize, fishSize, bananaSize;
 
 int main() {
 
@@ -296,6 +300,11 @@ int main() {
 		fishSize.push_back(unif_fsize(generator));
 	}
 
+	for (int i = 0; i < 50; i++) {
+		bananaposition.push_back(glm::vec3(unif_f(generator), 0.0f, unif_b(generator)));
+		bananaSize.push_back(unif_fsize(generator));
+	}
+
 	// Initial Light Setting
 	pointLights[4].Diffuse = glm::vec3(1.0f, 0.0f, 0.0f);
 	pointLights[4].Specular = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -324,6 +333,22 @@ int main() {
 		"Resources/Textures/skybox/back.jpg",
 	};
 	unsigned int cubemapTexture = loadCubemap(faces);
+
+	// Loading Animate
+	std::vector<std::string> banana{
+		"Resources/Textures/banana/banana-0.png",
+		"Resources/Textures/banana/banana-1.png",
+		"Resources/Textures/banana/banana-2.png",
+		"Resources/Textures/banana/banana-3.png",
+		"Resources/Textures/banana/banana-4.png",
+		"Resources/Textures/banana/banana-5.png",
+		"Resources/Textures/banana/banana-6.png",
+		"Resources/Textures/banana/banana-7.png",
+	};
+
+	for (unsigned int i = 0; i < 8; i++) {
+		bananaTexture.push_back(loadTexture(banana[i].c_str()));
+	}
 
 	// The main loop
 	while (!glfwWindowShouldClose(window)) {
@@ -406,9 +431,11 @@ int main() {
 			myShader.setVec4("material.specular", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 			myShader.setFloat("material.shininess", 64.0f);
 
-			dirLight.Diffuse.x = sin(0.475 * currentTime) / 2 + 0.5;
-			dirLight.Diffuse.y = sin(0.495 * currentTime) / 2 + 0.5;
-			dirLight.Diffuse.z = sin(0.5 * currentTime) / 2 + 0.5;
+			if (!skyboxColorManual) {
+				dirLight.Diffuse.x = sin(0.475 * currentTime) / 2 + 0.5;
+				dirLight.Diffuse.y = sin(0.495 * currentTime) / 2 + 0.5;
+				dirLight.Diffuse.z = sin(0.5 * currentTime) / 2 + 0.5;
+			}
 			myShader.setVec3("lights[0].direction", dirLight.Direction);
 			myShader.setVec3("lights[0].ambient", dirLight.Ambient);
 			myShader.setVec3("lights[0].diffuse", dirLight.Diffuse);
@@ -541,6 +568,16 @@ int main() {
 						// modelMatrix.save(glm::scale(modelMatrix.top(), glm::vec3(1.0f, 0.5f, 0.5f)));
 						myShader.setMat4("model", modelMatrix.top());
 						drawFish(myShader, fishposition[i], fishSize[i]);
+					modelMatrix.pop();
+				}
+			modelMatrix.pop();
+
+			// ==================== Draw banana ====================
+			modelMatrix.push();
+				for (unsigned int i = 0; i < bananaposition.size(); i++) {
+					modelMatrix.push();
+						myShader.setMat4("model", modelMatrix.top());
+						drawBanana(myShader, bananaposition[i], bananaSize[i]);
 					modelMatrix.pop();
 				}
 			modelMatrix.pop();
@@ -772,7 +809,6 @@ void showUI() {
 			ImGui::Text("Showing Axes: %s", showAxis ? "True" : "false");
 			ImGui::Text("Full Screen:  %s", isfullscreen ? "True" : "false");
 			ImGui::SliderFloat("zoom", &distanceOrthoCamera, 5, 25);
-			ImGui::Checkbox("Billboard", &enableBillboard);
 			ImGui::Spacing();
 
 			if (ImGui::TreeNode("General")) {
@@ -840,6 +876,7 @@ void showUI() {
 			ImGui::Spacing();
 			
 			if (ImGui::TreeNode("Direction Light")) {
+				ImGui::Checkbox("Manual Control", &skyboxColorManual);
 				ImGui::SliderFloat3("Direction", (float*)&dirLight.Direction, -10.0f, 10.0f);
 				ImGui::SliderFloat3("Ambient", (float*)&dirLight.Ambient, 0.0f, 1.0f);
 				ImGui::SliderFloat3("Diffuse", (float*)&dirLight.Diffuse, 0.0f, 1.0f);
@@ -899,6 +936,13 @@ void showUI() {
 				}
 				ImGui::Spacing();
 			}
+
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Texture")) {
+			ImGui::Checkbox("Billboard", &enableBillboard);
+			ImGui::SliderInt(std::string("Key Frame Rate").c_str(), &keyFrameRate, 0, 24);
+			ImGui::Spacing();
 
 			ImGui::EndTabItem();
 		}
@@ -1502,6 +1546,22 @@ void drawFish(Shader shader, glm::vec3 position, float size) {
 void drawGrass(Shader shader, glm::vec3 position, float size) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, grassTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, NULL);
+	shader.setBool("material.enableColorTexture", true);
+	shader.setBool("material.enableSpecularTexture", false);
+	shader.setBool("material.enableEmission", false);
+	shader.setBool("material.enableEmissionTexture", false);
+	shader.setFloat("material.shininess", 16.0f);
+	drawPlane(shader, position, size, size, 0);
+}
+
+void drawBanana(Shader shader, glm::vec3 position, float size) {
+	float c_time = (float)glfwGetTime();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, bananaTexture[((int)(c_time * keyFrameRate) % 8)]);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	glActiveTexture(GL_TEXTURE2);

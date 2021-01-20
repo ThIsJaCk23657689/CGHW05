@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FOG_H
+#define FOG_H
+
 #include <string>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -38,3 +40,5 @@ public:
 		Color = color;
 	}
 };
+
+#endif // !FOG_H
